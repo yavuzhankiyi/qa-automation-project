@@ -1,5 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class ProductsPage:
@@ -31,34 +33,45 @@ class ProductsPage:
 
     def __init__(self, driver):
         self.driver = driver
+        self.wait = WebDriverWait(driver, 10)
 
     def add_backpack_to_cart(self):
-        self.driver.find_element(
-            *self.ADD_BACKPACK_BUTTON
+        self.wait.until(
+            EC.element_to_be_clickable(
+                self.ADD_BACKPACK_BUTTON
+            )
         ).click()
 
     def get_cart_count(self):
-        return self.driver.find_element(
-            *self.CART_BADGE
+        return self.wait.until(
+            EC.visibility_of_element_located(
+                self.CART_BADGE
+            )
         ).text
 
     def go_to_cart(self):
-        self.driver.find_element(
-            *self.CART_LINK
+        self.wait.until(
+            EC.element_to_be_clickable(
+                self.CART_LINK
+            )
         ).click()
 
     def sort_products(self, value):
         dropdown = Select(
-            self.driver.find_element(
-                *self.SORT_DROPDOWN
+            self.wait.until(
+                EC.presence_of_element_located(
+                    self.SORT_DROPDOWN
+                )
             )
         )
 
         dropdown.select_by_value(value)
 
     def get_product_prices(self):
-        price_elements = self.driver.find_elements(
-            *self.PRODUCT_PRICES
+        price_elements = self.wait.until(
+            EC.presence_of_all_elements_located(
+                self.PRODUCT_PRICES
+            )
         )
 
         return [
