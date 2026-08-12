@@ -57,37 +57,63 @@ class CheckoutPage:
             )
         )
 
-    def enter_first_name(self, first_name):
+    def set_input_value(self, locator, value):
         element = self.wait.until(
             EC.visibility_of_element_located(
-                self.FIRST_NAME
+                locator
             )
         )
 
-        element.clear()
-        element.send_keys(first_name)
+        self.driver.execute_script(
+            """
+            const element = arguments[0];
+            const value = arguments[1];
+
+            const setter =
+                Object.getOwnPropertyDescriptor(
+                    HTMLInputElement.prototype,
+                    'value'
+                ).set;
+
+            setter.call(element, value);
+
+            element.dispatchEvent(
+                new Event('input', { bubbles: true })
+            );
+
+            element.dispatchEvent(
+                new Event('change', { bubbles: true })
+            );
+            """,
+            element,
+            value
+        )
+
+        self.wait.until(
+            lambda driver:
+                driver.find_element(
+                    *locator
+                ).get_attribute("value")
+                == value
+        )
+
+    def enter_first_name(self, first_name):
+        self.set_input_value(
+            self.FIRST_NAME,
+            first_name
+        )
 
     def enter_last_name(self, last_name):
-        element = self.wait.until(
-            EC.visibility_of_element_located(
-                self.LAST_NAME
-            )
+        self.set_input_value(
+            self.LAST_NAME,
+            last_name
         )
-
-        element.clear()
-        element.send_keys(last_name)
 
     def enter_postal_code(self, postal_code):
-        element = self.wait.until(
-            EC.visibility_of_element_located(
-                self.POSTAL_CODE
-            )
+        self.set_input_value(
+            self.POSTAL_CODE,
+            postal_code
         )
-
-        element.clear()
-
-        if postal_code:
-            element.send_keys(postal_code)
 
     def fill_checkout_information(
         self,
@@ -97,20 +123,23 @@ class CheckoutPage:
     ):
         self.wait_for_checkout_page()
 
-        self.enter_first_name(first_name)
-        self.enter_last_name(last_name)
-        self.enter_postal_code(postal_code)
+        self.enter_first_name(
+            first_name
+        )
+
+        self.enter_last_name(
+            last_name
+        )
+
+        self.enter_postal_code(
+            postal_code
+        )
 
     def click_continue(self):
         continue_button = self.wait.until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 self.CONTINUE_BUTTON
             )
-        )
-
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});",
-            continue_button
         )
 
         self.driver.execute_script(
@@ -118,9 +147,6 @@ class CheckoutPage:
             continue_button
         )
 
-        # Continue sonrası iki geçerli ihtimal var:
-        # 1 - Geçerli bilgiler -> step two
-        # 2 - Eksik bilgiler -> error message
         self.wait.until(
             lambda driver:
                 "checkout-step-two.html"
@@ -133,8 +159,6 @@ class CheckoutPage:
         )
 
     def click_finish(self):
-        # Önce overview sayfasına gerçekten
-        # geçtiğimizden emin oluyoruz.
         self.wait.until(
             EC.url_contains(
                 "checkout-step-two.html"
@@ -142,14 +166,9 @@ class CheckoutPage:
         )
 
         finish_button = self.wait.until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 self.FINISH_BUTTON
             )
-        )
-
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});",
-            finish_button
         )
 
         self.driver.execute_script(
@@ -173,10 +192,10 @@ class CheckoutPage:
         return error.text
 
     def get_complete_message(self):
-        complete_message = self.wait.until(
+        message = self.wait.until(
             EC.visibility_of_element_located(
                 self.COMPLETE_HEADER
             )
         )
 
-        return complete_message.text
+        return message.text

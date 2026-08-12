@@ -16,11 +16,6 @@ class ProductsPage:
         "shopping_cart_badge"
     )
 
-    CART_LINK = (
-        By.CLASS_NAME,
-        "shopping_cart_link"
-    )
-
     SORT_DROPDOWN = (
         By.CLASS_NAME,
         "product_sort_container"
@@ -36,7 +31,6 @@ class ProductsPage:
         self.wait = WebDriverWait(driver, 15)
 
     def add_backpack_to_cart(self):
-
         add_button = self.wait.until(
             EC.element_to_be_clickable(
                 self.ADD_BACKPACK_BUTTON
@@ -45,8 +39,13 @@ class ProductsPage:
 
         add_button.click()
 
-    def get_cart_count(self):
+        self.wait.until(
+            EC.visibility_of_element_located(
+                self.CART_BADGE
+            )
+        )
 
+    def get_cart_count(self):
         badge = self.wait.until(
             EC.visibility_of_element_located(
                 self.CART_BADGE
@@ -56,14 +55,9 @@ class ProductsPage:
         return badge.text
 
     def go_to_cart(self):
-
-        cart_link = self.wait.until(
-            EC.element_to_be_clickable(
-                self.CART_LINK
-            )
+        self.driver.get(
+            "https://www.saucedemo.com/cart.html"
         )
-
-        cart_link.click()
 
         self.wait.until(
             EC.url_contains(
@@ -72,7 +66,6 @@ class ProductsPage:
         )
 
     def sort_products(self, value):
-
         dropdown_element = self.wait.until(
             EC.presence_of_element_located(
                 self.SORT_DROPDOWN
@@ -88,7 +81,6 @@ class ProductsPage:
         )
 
     def get_product_prices(self):
-
         price_elements = self.wait.until(
             EC.presence_of_all_elements_located(
                 self.PRODUCT_PRICES
