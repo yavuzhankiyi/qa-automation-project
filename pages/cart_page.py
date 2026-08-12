@@ -25,55 +25,69 @@ class CartPage:
         self.wait = WebDriverWait(driver, 15)
 
     def get_item_name(self):
-        return self.wait.until(
+        item = self.wait.until(
             EC.visibility_of_element_located(
                 self.ITEM_NAME
             )
-        ).text
+        )
+
+        return item.text
 
     def remove_item(self):
         remove_button = self.wait.until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 self.REMOVE_BUTTON
             )
         )
 
-        remove_button.click()
+        # CI / headless ortamında daha stabil click
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            remove_button
+        )
+
+        self.driver.execute_script(
+            "arguments[0].click();",
+            remove_button
+        )
+
+        # Remove butonu DOM'dan kaybolana kadar bekle
+        self.wait.until(
+            EC.invisibility_of_element_located(
+                self.REMOVE_BUTTON
+            )
+        )
 
     def is_item_present(self):
         items = self.driver.find_elements(
-            *self.ITEM_NAME
+            *self.REMOVE_BUTTON
         )
 
         return len(items) > 0
 
     def click_checkout(self):
-
-        # Önce gerçekten cart sayfasında olduğumuzu kontrol ediyoruz
         self.wait.until(
-            EC.url_contains("cart.html")
+            EC.url_contains(
+                "cart.html"
+            )
         )
 
-        # Checkout butonunun DOM içerisinde oluşmasını bekliyoruz
         checkout_button = self.wait.until(
             EC.presence_of_element_located(
                 self.CHECKOUT_BUTTON
             )
         )
 
-        # Headless modda görünür alana getiriyoruz
         self.driver.execute_script(
             "arguments[0].scrollIntoView({block: 'center'});",
             checkout_button
         )
 
-        # Normal click yerine JavaScript click
         self.driver.execute_script(
             "arguments[0].click();",
             checkout_button
         )
 
-        # Checkout form sayfasının açıldığını doğruluyoruz
         self.wait.until(
             EC.url_contains(
                 "checkout-step-one.html"

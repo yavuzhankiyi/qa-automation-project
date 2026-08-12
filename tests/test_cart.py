@@ -1,5 +1,3 @@
-from selenium.webdriver.support.ui import WebDriverWait
-
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
@@ -45,17 +43,16 @@ def test_remove_product_from_cart(driver):
 
     products_page.add_backpack_to_cart()
 
+    assert products_page.get_cart_count() == "1"
+
     products_page.go_to_cart()
 
-    cart_page.remove_item()
-
-    WebDriverWait(
-        driver,
-        10
-    ).until(
-        lambda d:
-        not cart_page.is_item_present()
+    assert (
+        cart_page.get_item_name()
+        == "Sauce Labs Backpack"
     )
+
+    cart_page.remove_item()
 
     assert (
         cart_page.is_item_present()
