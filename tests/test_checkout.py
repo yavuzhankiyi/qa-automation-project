@@ -1,0 +1,97 @@
+from pages.login_page import LoginPage
+from pages.products_page import ProductsPage
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
+
+
+def test_successful_checkout(driver):
+
+    login_page = LoginPage(driver)
+    products_page = ProductsPage(driver)
+    cart_page = CartPage(driver)
+    checkout_page = CheckoutPage(driver)
+
+    login_page.open()
+
+    login_page.login(
+        "standard_user",
+        "secret_sauce"
+    )
+
+    products_page.add_backpack_to_cart()
+
+    products_page.go_to_cart()
+
+    cart_page.click_checkout()
+
+    checkout_page.fill_checkout_information(
+        "Yavuzhan",
+        "Kiyi",
+        "54000"
+    )
+
+    checkout_page.click_continue()
+
+    checkout_page.click_finish()
+
+    assert checkout_page.get_complete_message() == "Thank you for your order!"
+
+
+def test_checkout_without_first_name(driver):
+
+    login_page = LoginPage(driver)
+    products_page = ProductsPage(driver)
+    cart_page = CartPage(driver)
+    checkout_page = CheckoutPage(driver)
+
+    login_page.open()
+
+    login_page.login(
+        "standard_user",
+        "secret_sauce"
+    )
+
+    products_page.add_backpack_to_cart()
+    products_page.go_to_cart()
+
+    cart_page.click_checkout()
+
+    checkout_page.fill_checkout_information(
+        "",
+        "Kiyi",
+        "54000"
+    )
+
+    checkout_page.click_continue()
+
+    assert "First Name is required" in checkout_page.get_error_message()
+
+
+def test_checkout_without_postal_code(driver):
+
+    login_page = LoginPage(driver)
+    products_page = ProductsPage(driver)
+    cart_page = CartPage(driver)
+    checkout_page = CheckoutPage(driver)
+
+    login_page.open()
+
+    login_page.login(
+        "standard_user",
+        "secret_sauce"
+    )
+
+    products_page.add_backpack_to_cart()
+    products_page.go_to_cart()
+
+    cart_page.click_checkout()
+
+    checkout_page.fill_checkout_information(
+        "Yavuzhan",
+        "Kiyi",
+        ""
+    )
+
+    checkout_page.click_continue()
+
+    assert "Postal Code is required" in checkout_page.get_error_message()
