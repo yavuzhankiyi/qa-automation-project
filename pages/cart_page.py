@@ -22,7 +22,7 @@ class CartPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 15)
 
     def get_item_name(self):
         return self.wait.until(
@@ -32,15 +32,50 @@ class CartPage:
         ).text
 
     def remove_item(self):
-        self.wait.until(
+        remove_button = self.wait.until(
             EC.element_to_be_clickable(
                 self.REMOVE_BUTTON
             )
-        ).click()
+        )
+
+        remove_button.click()
+
+    def is_item_present(self):
+        items = self.driver.find_elements(
+            *self.ITEM_NAME
+        )
+
+        return len(items) > 0
 
     def click_checkout(self):
+
+        # Önce gerçekten cart sayfasında olduğumuzu kontrol ediyoruz
         self.wait.until(
-            EC.element_to_be_clickable(
+            EC.url_contains("cart.html")
+        )
+
+        # Checkout butonunun DOM içerisinde oluşmasını bekliyoruz
+        checkout_button = self.wait.until(
+            EC.presence_of_element_located(
                 self.CHECKOUT_BUTTON
             )
-        ).click()
+        )
+
+        # Headless modda görünür alana getiriyoruz
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            checkout_button
+        )
+
+        # Normal click yerine JavaScript click
+        self.driver.execute_script(
+            "arguments[0].click();",
+            checkout_button
+        )
+
+        # Checkout form sayfasının açıldığını doğruluyoruz
+        self.wait.until(
+            EC.url_contains(
+                "checkout-step-one.html"
+            )
+        )

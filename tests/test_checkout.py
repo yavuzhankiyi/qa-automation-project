@@ -34,7 +34,10 @@ def test_successful_checkout(driver):
 
     checkout_page.click_finish()
 
-    assert checkout_page.get_complete_message() == "Thank you for your order!"
+    assert (
+        checkout_page.get_complete_message()
+        == "Thank you for your order!"
+    )
 
 
 def test_checkout_without_first_name(driver):
@@ -52,6 +55,7 @@ def test_checkout_without_first_name(driver):
     )
 
     products_page.add_backpack_to_cart()
+
     products_page.go_to_cart()
 
     cart_page.click_checkout()
@@ -64,7 +68,14 @@ def test_checkout_without_first_name(driver):
 
     checkout_page.click_continue()
 
-    assert "First Name is required" in checkout_page.get_error_message()
+    error_message = (
+        checkout_page.get_error_message()
+    )
+
+    assert (
+        "First Name is required"
+        in error_message
+    )
 
 
 def test_checkout_without_postal_code(driver):
@@ -82,6 +93,7 @@ def test_checkout_without_postal_code(driver):
     )
 
     products_page.add_backpack_to_cart()
+
     products_page.go_to_cart()
 
     cart_page.click_checkout()
@@ -94,4 +106,11 @@ def test_checkout_without_postal_code(driver):
 
     checkout_page.click_continue()
 
-    assert "Postal Code is required" in checkout_page.get_error_message()
+    error_message = (
+        checkout_page.get_error_message()
+    )
+
+    assert (
+        "Postal Code is required"
+        in error_message
+    )

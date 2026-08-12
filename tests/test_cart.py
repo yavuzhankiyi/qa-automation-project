@@ -1,3 +1,5 @@
+from selenium.webdriver.support.ui import WebDriverWait
+
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
@@ -22,7 +24,10 @@ def test_add_product_to_cart(driver):
 
     products_page.go_to_cart()
 
-    assert cart_page.get_item_name() == "Sauce Labs Backpack"
+    assert (
+        cart_page.get_item_name()
+        == "Sauce Labs Backpack"
+    )
 
 
 def test_remove_product_from_cart(driver):
@@ -44,4 +49,15 @@ def test_remove_product_from_cart(driver):
 
     cart_page.remove_item()
 
-    assert "Sauce Labs Backpack" not in driver.page_source
+    WebDriverWait(
+        driver,
+        10
+    ).until(
+        lambda d:
+        not cart_page.is_item_present()
+    )
+
+    assert (
+        cart_page.is_item_present()
+        is False
+    )

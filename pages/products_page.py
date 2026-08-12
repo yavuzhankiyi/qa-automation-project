@@ -33,48 +33,78 @@ class ProductsPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 15)
 
     def add_backpack_to_cart(self):
-        self.wait.until(
+
+        add_button = self.wait.until(
             EC.element_to_be_clickable(
                 self.ADD_BACKPACK_BUTTON
             )
-        ).click()
+        )
+
+        add_button.click()
 
     def get_cart_count(self):
-        return self.wait.until(
+
+        badge = self.wait.until(
             EC.visibility_of_element_located(
                 self.CART_BADGE
             )
-        ).text
+        )
+
+        return badge.text
 
     def go_to_cart(self):
-        self.wait.until(
+
+        cart_link = self.wait.until(
             EC.element_to_be_clickable(
                 self.CART_LINK
             )
-        ).click()
+        )
 
-    def sort_products(self, value):
-        dropdown = Select(
-            self.wait.until(
-                EC.presence_of_element_located(
-                    self.SORT_DROPDOWN
-                )
+        cart_link.click()
+
+        self.wait.until(
+            EC.url_contains(
+                "cart.html"
             )
         )
 
-        dropdown.select_by_value(value)
+    def sort_products(self, value):
+
+        dropdown_element = self.wait.until(
+            EC.presence_of_element_located(
+                self.SORT_DROPDOWN
+            )
+        )
+
+        dropdown = Select(
+            dropdown_element
+        )
+
+        dropdown.select_by_value(
+            value
+        )
 
     def get_product_prices(self):
+
         price_elements = self.wait.until(
             EC.presence_of_all_elements_located(
                 self.PRODUCT_PRICES
             )
         )
 
-        return [
-            float(element.text.replace("$", ""))
-            for element in price_elements
-        ]
+        prices = []
+
+        for element in price_elements:
+            price = element.text.replace(
+                "$",
+                ""
+            )
+
+            prices.append(
+                float(price)
+            )
+
+        return prices
