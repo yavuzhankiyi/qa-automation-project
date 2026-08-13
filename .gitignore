@@ -4,4 +4,6 @@ __pycache__/
 *.pyc
 
 reports/screenshots/
-reports/*.html.env
+reports/*.html
+
+.env
