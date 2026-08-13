@@ -333,3 +333,136 @@ Interested in:
 - QA Automation
 - DevOps
 - Software Engineering
+---
+
+## Test Execution Strategy
+
+The project uses Pytest markers to organize and execute different test groups.
+
+### Smoke Tests
+
+Smoke tests validate the most critical application flows.
+
+Run:
+
+    pytest -m smoke
+
+Smoke coverage includes:
+
+- Successful Login
+- Add Product to Cart
+- Successful Checkout
+- Critical API GET operations
+
+---
+
+### Regression Tests
+
+Regression tests validate the complete automated test suite.
+
+Run:
+
+    pytest -m regression
+
+Current regression result:
+
+    18 tests
+    18 passed
+    0 failed
+
+---
+
+### UI Tests
+
+Run only Selenium UI automation tests:
+
+    pytest -m ui
+
+UI coverage includes:
+
+- Login
+- Cart
+- Checkout
+- Product Sorting
+
+---
+
+### API Tests
+
+Run only REST API tests:
+
+    pytest -m api
+
+API coverage includes:
+
+- GET
+- POST
+- PUT
+- DELETE
+- Negative resource validation
+
+---
+
+## Pytest Markers
+
+The following markers are defined in pytest.ini:
+
+    ui
+    api
+    smoke
+    regression
+
+This allows the automation suite to be executed based on testing scope.
+
+Examples:
+
+    pytest -m smoke
+    pytest -m regression
+    pytest -m ui
+    pytest -m api
+
+---
+
+## CI Test Strategy
+
+GitHub Actions automatically executes the automation suite.
+
+### Smoke Tests
+
+Smoke tests are used to validate critical functionality quickly.
+
+### Regression Tests
+
+Full regression tests validate all automated scenarios after changes are pushed to the main branch.
+
+The CI workflow performs the following steps:
+
+    Checkout Repository
+            v
+    Set Up Python
+            v
+    Install Dependencies
+            v
+    Run Smoke Tests
+            v
+    Run Regression Tests
+            v
+    Generate HTML Report
+            v
+    Upload Test Report Artifact
+
+---
+
+## Current Automation Status
+
+    UI Automation       PASS
+    API Automation      PASS
+    Smoke Tests         PASS
+    Regression Tests    PASS
+    GitHub Actions      PASS
+
+Current automated regression suite:
+
+    18 Passed
+    0 Failed
+
