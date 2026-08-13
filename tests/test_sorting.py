@@ -2,7 +2,22 @@ import pytest
 
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
-from config.config import TEST_USERNAME, TEST_PASSWORD
+
+from config.config import (
+    TEST_USERNAME,
+    TEST_PASSWORD
+)
+
+from utils.data_loader import (
+    load_test_data
+)
+
+
+TEST_DATA = load_test_data()
+
+SORTING_DATA = (
+    TEST_DATA["sorting"]
+)
 
 
 @pytest.mark.ui
@@ -20,7 +35,7 @@ def test_sort_price_low_to_high(driver):
     )
 
     products_page.sort_products(
-        "lohi"
+        SORTING_DATA["low_to_high"]
     )
 
     prices = (
@@ -47,7 +62,7 @@ def test_sort_price_high_to_low(driver):
     )
 
     products_page.sort_products(
-        "hilo"
+        SORTING_DATA["high_to_low"]
     )
 
     prices = (
@@ -58,4 +73,3 @@ def test_sort_price_high_to_low(driver):
         prices,
         reverse=True
     )
-

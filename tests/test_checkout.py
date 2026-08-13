@@ -4,13 +4,32 @@ from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
-from config.config import TEST_USERNAME, TEST_PASSWORD
+
+from config.config import (
+    TEST_USERNAME,
+    TEST_PASSWORD
+)
+
+from utils.data_loader import (
+    load_test_data
+)
+
+
+TEST_DATA = load_test_data()
+
+CHECKOUT_DATA = (
+    TEST_DATA["checkout"]
+)
 
 
 @pytest.mark.ui
 @pytest.mark.smoke
 @pytest.mark.regression
 def test_successful_checkout(driver):
+
+    checkout_data = (
+        CHECKOUT_DATA["valid"]
+    )
 
     login_page = LoginPage(driver)
     products_page = ProductsPage(driver)
@@ -31,9 +50,9 @@ def test_successful_checkout(driver):
     cart_page.click_checkout()
 
     checkout_page.fill_checkout_information(
-        "Yavuzhan",
-        "Kiyi",
-        "54000"
+        checkout_data["first_name"],
+        checkout_data["last_name"],
+        checkout_data["postal_code"]
     )
 
     checkout_page.click_continue()
@@ -42,13 +61,21 @@ def test_successful_checkout(driver):
 
     assert (
         checkout_page.get_complete_message()
-        == "Thank you for your order!"
+        == checkout_data[
+            "expected_message"
+        ]
     )
 
 
 @pytest.mark.ui
 @pytest.mark.regression
 def test_checkout_without_first_name(driver):
+
+    checkout_data = (
+        CHECKOUT_DATA[
+            "without_first_name"
+        ]
+    )
 
     login_page = LoginPage(driver)
     products_page = ProductsPage(driver)
@@ -69,9 +96,9 @@ def test_checkout_without_first_name(driver):
     cart_page.click_checkout()
 
     checkout_page.fill_checkout_information(
-        "",
-        "Kiyi",
-        "54000"
+        checkout_data["first_name"],
+        checkout_data["last_name"],
+        checkout_data["postal_code"]
     )
 
     checkout_page.click_continue()
@@ -81,7 +108,7 @@ def test_checkout_without_first_name(driver):
     )
 
     assert (
-        "First Name is required"
+        checkout_data["expected_error"]
         in error_message
     )
 
@@ -90,6 +117,12 @@ def test_checkout_without_first_name(driver):
 @pytest.mark.regression
 def test_checkout_without_postal_code(driver):
 
+    checkout_data = (
+        CHECKOUT_DATA[
+            "without_postal_code"
+        ]
+    )
+
     login_page = LoginPage(driver)
     products_page = ProductsPage(driver)
     cart_page = CartPage(driver)
@@ -109,9 +142,9 @@ def test_checkout_without_postal_code(driver):
     cart_page.click_checkout()
 
     checkout_page.fill_checkout_information(
-        "Yavuzhan",
-        "Kiyi",
-        ""
+        checkout_data["first_name"],
+        checkout_data["last_name"],
+        checkout_data["postal_code"]
     )
 
     checkout_page.click_continue()
@@ -121,7 +154,6 @@ def test_checkout_without_postal_code(driver):
     )
 
     assert (
-        "Postal Code is required"
+        checkout_data["expected_error"]
         in error_message
     )
-

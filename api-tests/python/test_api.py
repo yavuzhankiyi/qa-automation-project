@@ -1,10 +1,18 @@
 import pytest
 import requests
 
-from config.config import API_BASE_URL
+from config.config import (
+    API_BASE_URL
+)
+
+from utils.data_loader import (
+    load_test_data
+)
 
 
-BASE_URL = API_BASE_URL
+TEST_DATA = load_test_data()
+
+API_DATA = TEST_DATA["api"]
 
 
 @pytest.mark.api
@@ -13,7 +21,7 @@ BASE_URL = API_BASE_URL
 def test_get_all_posts():
 
     response = requests.get(
-        f"{BASE_URL}/posts"
+        f"{API_BASE_URL}/posts"
     )
 
     assert response.status_code == 200
@@ -32,15 +40,19 @@ def test_get_all_posts():
 @pytest.mark.regression
 def test_get_single_post():
 
+    post_id = (
+        API_DATA["valid_post_id"]
+    )
+
     response = requests.get(
-        f"{BASE_URL}/posts/1"
+        f"{API_BASE_URL}/posts/{post_id}"
     )
 
     assert response.status_code == 200
 
     data = response.json()
 
-    assert data["id"] == 1
+    assert data["id"] == post_id
     assert "title" in data
     assert data["body"] != ""
 
@@ -49,14 +61,10 @@ def test_get_single_post():
 @pytest.mark.regression
 def test_create_post():
 
-    payload = {
-        "title": "QA Automation Project",
-        "body": "API testing with Python",
-        "userId": 1
-    }
+    payload = API_DATA["post"]
 
     response = requests.post(
-        f"{BASE_URL}/posts",
+        f"{API_BASE_URL}/posts",
         json=payload
     )
 
@@ -65,23 +73,30 @@ def test_create_post():
     data = response.json()
 
     assert "id" in data
-    assert data["title"] == "QA Automation Project"
-    assert data["userId"] == 1
+
+    assert (
+        data["title"]
+        == payload["title"]
+    )
+
+    assert (
+        data["userId"]
+        == payload["userId"]
+    )
 
 
 @pytest.mark.api
 @pytest.mark.regression
 def test_update_post():
 
-    payload = {
-        "id": 1,
-        "title": "Updated QA Project",
-        "body": "Updated using Python",
-        "userId": 1
-    }
+    payload = (
+        API_DATA["updated_post"]
+    )
+
+    post_id = payload["id"]
 
     response = requests.put(
-        f"{BASE_URL}/posts/1",
+        f"{API_BASE_URL}/posts/{post_id}",
         json=payload
     )
 
@@ -89,17 +104,29 @@ def test_update_post():
 
     data = response.json()
 
-    assert data["id"] == 1
-    assert data["title"] == "Updated QA Project"
-    assert data["userId"] == 1
+    assert data["id"] == post_id
+
+    assert (
+        data["title"]
+        == payload["title"]
+    )
+
+    assert (
+        data["userId"]
+        == payload["userId"]
+    )
 
 
 @pytest.mark.api
 @pytest.mark.regression
 def test_delete_post():
 
+    post_id = (
+        API_DATA["valid_post_id"]
+    )
+
     response = requests.delete(
-        f"{BASE_URL}/posts/1"
+        f"{API_BASE_URL}/posts/{post_id}"
     )
 
     assert response.status_code == 200
@@ -109,9 +136,12 @@ def test_delete_post():
 @pytest.mark.regression
 def test_invalid_post():
 
+    post_id = (
+        API_DATA["invalid_post_id"]
+    )
+
     response = requests.get(
-        f"{BASE_URL}/posts/999999"
+        f"{API_BASE_URL}/posts/{post_id}"
     )
 
     assert response.status_code == 404
-

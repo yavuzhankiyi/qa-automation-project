@@ -1,0 +1,71 @@
+{
+  "login": {
+    "valid": {
+      "username": "standard_user",
+      "password": "secret_sauce"
+    },
+    "invalid_password": {
+      "password": "wrong_password",
+      "expected_error": "Username and password do not match"
+    },
+    "empty_username": {
+      "expected_error": "Username is required"
+    },
+    "empty_password": {
+      "expected_error": "Password is required"
+    }
+  },
+
+  "checkout": {
+    "valid": {
+      "first_name": "Yavuzhan",
+      "last_name": "Kiyi",
+      "postal_code": "54000",
+      "expected_message": "Thank you for your order!"
+    },
+
+    "without_first_name": {
+      "first_name": "",
+      "last_name": "Kiyi",
+      "postal_code": "54000",
+      "expected_error": "First Name is required"
+    },
+
+    "without_postal_code": {
+      "first_name": "Yavuzhan",
+      "last_name": "Kiyi",
+      "postal_code": "",
+      "expected_error": "Postal Code is required"
+    }
+  },
+
+  "product": {
+    "backpack": {
+      "name": "Sauce Labs Backpack",
+      "cart_count": "1"
+    }
+  },
+
+  "sorting": {
+    "low_to_high": "lohi",
+    "high_to_low": "hilo"
+  },
+
+  "api": {
+    "post": {
+      "title": "QA Automation Project",
+      "body": "API testing with Python",
+      "userId": 1
+    },
+
+    "updated_post": {
+      "id": 1,
+      "title": "Updated QA Project",
+      "body": "Updated using Python",
+      "userId": 1
+    },
+
+    "valid_post_id": 1,
+    "invalid_post_id": 999999
+  }
+}
