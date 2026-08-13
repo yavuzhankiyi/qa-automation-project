@@ -1,11 +1,18 @@
+import pytest
 import requests
 
 
 BASE_URL = "https://jsonplaceholder.typicode.com"
 
 
+@pytest.mark.api
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_get_all_posts():
-    response = requests.get(f"{BASE_URL}/posts")
+
+    response = requests.get(
+        f"{BASE_URL}/posts"
+    )
 
     assert response.status_code == 200
 
@@ -18,8 +25,14 @@ def test_get_all_posts():
     assert "userId" in data[0]
 
 
+@pytest.mark.api
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_get_single_post():
-    response = requests.get(f"{BASE_URL}/posts/1")
+
+    response = requests.get(
+        f"{BASE_URL}/posts/1"
+    )
 
     assert response.status_code == 200
 
@@ -30,7 +43,10 @@ def test_get_single_post():
     assert data["body"] != ""
 
 
+@pytest.mark.api
+@pytest.mark.regression
 def test_create_post():
+
     payload = {
         "title": "QA Automation Project",
         "body": "API testing with Python",
@@ -51,7 +67,10 @@ def test_create_post():
     assert data["userId"] == 1
 
 
+@pytest.mark.api
+@pytest.mark.regression
 def test_update_post():
+
     payload = {
         "id": 1,
         "title": "Updated QA Project",
@@ -73,7 +92,10 @@ def test_update_post():
     assert data["userId"] == 1
 
 
+@pytest.mark.api
+@pytest.mark.regression
 def test_delete_post():
+
     response = requests.delete(
         f"{BASE_URL}/posts/1"
     )
@@ -81,7 +103,10 @@ def test_delete_post():
     assert response.status_code == 200
 
 
+@pytest.mark.api
+@pytest.mark.regression
 def test_invalid_post():
+
     response = requests.get(
         f"{BASE_URL}/posts/999999"
     )

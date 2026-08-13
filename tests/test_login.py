@@ -3,10 +3,14 @@ import pytest
 from pages.login_page import LoginPage
 
 
+@pytest.mark.ui
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_valid_login(driver):
     login_page = LoginPage(driver)
 
     login_page.open()
+
     login_page.login(
         "standard_user",
         "secret_sauce"
@@ -15,6 +19,8 @@ def test_valid_login(driver):
     assert "inventory" in driver.current_url
 
 
+@pytest.mark.ui
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "username,password,expected_message",
     [
@@ -49,9 +55,13 @@ def test_invalid_login(
     login_page = LoginPage(driver)
 
     login_page.open()
+
     login_page.login(
         username,
         password
     )
 
-    assert expected_message in login_page.get_error_message()
+    assert (
+        expected_message
+        in login_page.get_error_message()
+    )

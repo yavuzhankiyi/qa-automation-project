@@ -1,9 +1,14 @@
+import pytest
+
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 
 
+@pytest.mark.ui
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_successful_checkout(driver):
 
     login_page = LoginPage(driver)
@@ -40,6 +45,8 @@ def test_successful_checkout(driver):
     )
 
 
+@pytest.mark.ui
+@pytest.mark.regression
 def test_checkout_without_first_name(driver):
 
     login_page = LoginPage(driver)
@@ -78,6 +85,8 @@ def test_checkout_without_first_name(driver):
     )
 
 
+@pytest.mark.ui
+@pytest.mark.regression
 def test_checkout_without_postal_code(driver):
 
     login_page = LoginPage(driver)

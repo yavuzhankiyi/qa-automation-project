@@ -1,8 +1,13 @@
+import pytest
+
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
 
 
+@pytest.mark.ui
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_add_product_to_cart(driver):
 
     login_page = LoginPage(driver)
@@ -28,6 +33,8 @@ def test_add_product_to_cart(driver):
     )
 
 
+@pytest.mark.ui
+@pytest.mark.regression
 def test_remove_product_from_cart(driver):
 
     login_page = LoginPage(driver)
