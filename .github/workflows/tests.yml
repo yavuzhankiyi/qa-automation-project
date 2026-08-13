@@ -2,20 +2,28 @@ name: QA Automation Tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   pull_request:
-    branches: [main]
+    branches:
+      - main
+
+  workflow_dispatch:
 
 jobs:
-  test:
+
+  smoke-tests:
+    name: Smoke Tests
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
@@ -24,14 +32,44 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run tests
+      - name: Run smoke tests
+        run: |
+          pytest -m smoke -v
+
+
+  regression-tests:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create reports directory
         run: |
           mkdir -p reports
-          pytest -v --html=reports/ci-test-report.html --self-contained-html
 
-      - name: Upload test report
+      - name: Run regression tests
+        run: |
+          pytest -m regression -v --html=reports/regression-report.html --self-contained-html
+
+      - name: Upload regression test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: qa-test-report
-          path: reports/ci-test-report.html
+          name: regression-test-report
+          path: reports/regression-report.html
+          retention-days: 14
