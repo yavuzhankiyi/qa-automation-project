@@ -3,6 +3,7 @@ import pytest
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
+from config.config import TEST_USERNAME, TEST_PASSWORD
 
 
 @pytest.mark.ui
@@ -17,8 +18,8 @@ def test_add_product_to_cart(driver):
     login_page.open()
 
     login_page.login(
-        "standard_user",
-        "secret_sauce"
+        TEST_USERNAME,
+        TEST_PASSWORD
     )
 
     products_page.add_backpack_to_cart()
@@ -44,8 +45,8 @@ def test_remove_product_from_cart(driver):
     login_page.open()
 
     login_page.login(
-        "standard_user",
-        "secret_sauce"
+        TEST_USERNAME,
+        TEST_PASSWORD
     )
 
     products_page.add_backpack_to_cart()
@@ -65,3 +66,4 @@ def test_remove_product_from_cart(driver):
         cart_page.is_item_present()
         is False
     )
+

@@ -1,8 +1,10 @@
 import pytest
 import requests
 
+from config.config import API_BASE_URL
 
-BASE_URL = "https://jsonplaceholder.typicode.com"
+
+BASE_URL = API_BASE_URL
 
 
 @pytest.mark.api
@@ -112,3 +114,4 @@ def test_invalid_post():
     )
 
     assert response.status_code == 404
+

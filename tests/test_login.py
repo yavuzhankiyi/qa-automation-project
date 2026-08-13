@@ -2,18 +2,24 @@ import pytest
 
 from pages.login_page import LoginPage
 
+from config.config import (
+    TEST_USERNAME,
+    TEST_PASSWORD
+)
+
 
 @pytest.mark.ui
 @pytest.mark.smoke
 @pytest.mark.regression
 def test_valid_login(driver):
+
     login_page = LoginPage(driver)
 
     login_page.open()
 
     login_page.login(
-        "standard_user",
-        "secret_sauce"
+        TEST_USERNAME,
+        TEST_PASSWORD
     )
 
     assert "inventory" in driver.current_url
@@ -25,17 +31,17 @@ def test_valid_login(driver):
     "username,password,expected_message",
     [
         (
-            "standard_user",
+            TEST_USERNAME,
             "wrong_password",
             "Username and password do not match"
         ),
         (
             "",
-            "secret_sauce",
+            TEST_PASSWORD,
             "Username is required"
         ),
         (
-            "standard_user",
+            TEST_USERNAME,
             "",
             "Password is required"
         ),
@@ -52,6 +58,7 @@ def test_invalid_login(
     password,
     expected_message
 ):
+
     login_page = LoginPage(driver)
 
     login_page.open()
