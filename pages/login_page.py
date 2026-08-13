@@ -1,9 +1,10 @@
 from selenium.webdriver.common.by import By
 
+from pages.base_page import BasePage
 from config.config import BASE_URL
 
 
-class LoginPage:
+class LoginPage(BasePage):
 
     USERNAME_INPUT = (
         By.ID,
@@ -25,26 +26,33 @@ class LoginPage:
         "[data-test='error']"
     )
 
-    def __init__(self, driver):
-        self.driver = driver
-
     def open(self):
-        self.driver.get(BASE_URL)
+        self.open_url(
+            BASE_URL
+        )
 
-    def enter_username(self, username):
-        self.driver.find_element(
-            *self.USERNAME_INPUT
-        ).send_keys(username)
+    def enter_username(
+        self,
+        username
+    ):
+        self.type_text(
+            self.USERNAME_INPUT,
+            username
+        )
 
-    def enter_password(self, password):
-        self.driver.find_element(
-            *self.PASSWORD_INPUT
-        ).send_keys(password)
+    def enter_password(
+        self,
+        password
+    ):
+        self.type_text(
+            self.PASSWORD_INPUT,
+            password
+        )
 
     def click_login(self):
-        self.driver.find_element(
-            *self.LOGIN_BUTTON
-        ).click()
+        self.click(
+            self.LOGIN_BUTTON
+        )
 
     def login(
         self,
@@ -62,6 +70,6 @@ class LoginPage:
         self.click_login()
 
     def get_error_message(self):
-        return self.driver.find_element(
-            *self.ERROR_MESSAGE
-        ).text
+        return self.get_text(
+            self.ERROR_MESSAGE
+        )

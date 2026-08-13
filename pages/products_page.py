@@ -1,10 +1,12 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from pages.base_page import BasePage
+from config.config import BASE_URL
 
-class ProductsPage:
+
+class ProductsPage(BasePage):
 
     ADD_BACKPACK_BUTTON = (
         By.ID,
@@ -26,50 +28,40 @@ class ProductsPage:
         "inventory_item_price"
     )
 
-    def __init__(self, driver):
-        self.driver = driver
-        self.wait = WebDriverWait(driver, 15)
-
     def add_backpack_to_cart(self):
-        add_button = self.wait.until(
-            EC.element_to_be_clickable(
-                self.ADD_BACKPACK_BUTTON
-            )
+        self.click(
+            self.ADD_BACKPACK_BUTTON
         )
 
-        add_button.click()
-
-        self.wait.until(
-            EC.visibility_of_element_located(
-                self.CART_BADGE
-            )
+        self.find_visible(
+            self.CART_BADGE
         )
 
     def get_cart_count(self):
-        badge = self.wait.until(
-            EC.visibility_of_element_located(
-                self.CART_BADGE
-            )
+        return self.get_text(
+            self.CART_BADGE
         )
-
-        return badge.text
 
     def go_to_cart(self):
-        self.driver.get(
-            "https://www.saucedemo.com/cart.html"
+        cart_url = (
+            BASE_URL.rstrip("/")
+            + "/cart.html"
         )
 
-        self.wait.until(
-            EC.url_contains(
-                "cart.html"
-            )
+        self.open_url(
+            cart_url
         )
 
-    def sort_products(self, value):
-        dropdown_element = self.wait.until(
-            EC.presence_of_element_located(
-                self.SORT_DROPDOWN
-            )
+        self.wait_for_url(
+            "cart.html"
+        )
+
+    def sort_products(
+        self,
+        value
+    ):
+        dropdown_element = self.find(
+            self.SORT_DROPDOWN
         )
 
         dropdown = Select(
@@ -81,22 +73,18 @@ class ProductsPage:
         )
 
     def get_product_prices(self):
-        price_elements = self.wait.until(
+        elements = self.wait.until(
             EC.presence_of_all_elements_located(
                 self.PRODUCT_PRICES
             )
         )
 
-        prices = []
-
-        for element in price_elements:
-            price = element.text.replace(
-                "$",
-                ""
+        return [
+            float(
+                element.text.replace(
+                    "$",
+                    ""
+                )
             )
-
-            prices.append(
-                float(price)
-            )
-
-        return prices
+            for element in elements
+        ]
